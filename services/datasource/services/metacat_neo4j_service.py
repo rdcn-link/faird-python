@@ -222,7 +222,7 @@ class MetaCatNeo4jService(FairdDatasourceInterface):
                 logger.error(f"Error fetching dataset details: {response.status_code}")
                 return None
             data = response.json()
-            has_permission = data.get("data", "{}").get("result", default=False)
+            has_permission = data.get("data", "{}").get("result", False)
             return has_permission
         except Exception as e:
             logger.error(f"Error fetching dataset info from metacat: {e}")
