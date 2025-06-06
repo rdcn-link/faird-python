@@ -242,7 +242,7 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                 ".csv": csv_parser.CSVParser,
                 ".json": None,
                 ".xml": None,
-                ".nc": nc_parser.NCParser,
+                ".nc": nc_parser_1.NCParser,
                 ".tiff": tif_parser.TIFParser,
                 ".tif": tif_parser.TIFParser
             }
@@ -282,7 +282,7 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
             ".csv": csv_parser.CSVParser,
             ".json": None,
             ".xml": None,
-            ".nc": nc_parser.NCParser,
+            ".nc": nc_parser_1.NCParser,
             ".tiff": tif_parser.TIFParser,
             ".tif": tif_parser.TIFParser
         }
