@@ -501,23 +501,23 @@ class NCParser(BaseParser):
         }
         return result
     
-    def count(self, file_path: str) -> int:
-        """
-        返回解析后 Arrow Table 的总行数（即主变量 shape 的元素数最大值）。
-        新增：记录 Arrow Table 总行数，parse方法生成的Arrow Table总行数 = shape中最高维变量的所有元素数量（即所有主变量shape的乘积）！
-        原理：parse方法通常会将所有主变量（shape大于1的变量）拉平成一维，每一行对应原始nc文件中所有主变量的一个元素（即所有维度的组合），而不是只按第一个维度分块。
-        arrow_table_rows = max(np.prod(shape) for shape in shapes)
-        """
-        try:
-            ds = xr.open_dataset(file_path, decode_cf=False)
-            var_names = [v for v in ds.variables if ds[v].ndim > 0]
-            shapes = [tuple(ds[v].shape) for v in var_names]
-            if not shapes:
-                return 0
-            # Arrow Table 行数 = 所有主变量 shape 的元素总数的最大值
-            total_rows = max(np.prod(shape) for shape in shapes)
-            ds.close()
-            return int(total_rows)
-        except Exception as e:
-            logger.error(f"统计 NetCDF 文件 Arrow Table 行数失败: {e}")
-            raise
+    # def count(self, file_path: str) -> int:
+    #     """
+    #     返回解析后 Arrow Table 的总行数（即主变量 shape 的元素数最大值）。
+    #     新增：记录 Arrow Table 总行数，parse方法生成的Arrow Table总行数 = shape中最高维变量的所有元素数量（即所有主变量shape的乘积）！
+    #     原理：parse方法通常会将所有主变量（shape大于1的变量）拉平成一维，每一行对应原始nc文件中所有主变量的一个元素（即所有维度的组合），而不是只按第一个维度分块。
+    #     arrow_table_rows = max(np.prod(shape) for shape in shapes)
+    #     """
+    #     try:
+    #         ds = xr.open_dataset(file_path, decode_cf=False)
+    #         var_names = [v for v in ds.variables if ds[v].ndim > 0]
+    #         shapes = [tuple(ds[v].shape) for v in var_names]
+    #         if not shapes:
+    #             return 0
+    #         # Arrow Table 行数 = 所有主变量 shape 的元素总数的最大值
+    #         total_rows = max(np.prod(shape) for shape in shapes)
+    #         ds.close()
+    #         return int(total_rows)
+    #     except Exception as e:
+    #         logger.error(f"统计 NetCDF 文件 Arrow Table 行数失败: {e}")
+    #         raise
