@@ -8,7 +8,7 @@ from services.connection.faird_connection import FairdConnection
 from utils.format_utils import format_arrow_table
 from services.datasource.services import *
 from services.types.thread_safe_dict import ThreadSafeDict
-from services.connection.connection_service import connect_server
+from services.connection.connection_service import connect_server_with_oauth, connect_server_with_controld
 from parser import *
 from compute.interactive.interactive import *
 from core.config import FairdConfigManager
@@ -104,16 +104,25 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
         action_type = action.type
         if action_type == "connect_server":
             ticket_data = json.loads(action.body.to_pybytes().decode('utf-8'))
-            if ticket_data.get('username'):
-                token = connect_server(ticket_data.get('username'), ticket_data.get('password'))
+            auth_type = ticket_data.get('auth_type')
+            if auth_type == "oauth":
+                token = connect_server_with_oauth(ticket_data.get('type'), ticket_data.get('username'), ticket_data.get('password'))
                 conn = FairdConnection(clientIp=ticket_data.get('clientIp'), username=ticket_data.get('username'), token=token)
                 self.connections[conn.connectionID] = conn
                 return iter([pa.flight.Result(json.dumps({"token": token, "connectionID": conn.connectionID}).encode("utf-8"))])
-            elif ticket_data.get('controld_domain_name'):
+            elif auth_type == "controld":
+                verified = connect_server_with_controld(ticket_data.get('controld_domain_name'), ticket_data.get('signature'))
+                if verified:
+                    conn = FairdConnection(clientIp=ticket_data.get('clientIp'))
+                    self.connections[conn.connectionID] = conn
+                    return iter([pa.flight.Result(json.dumps({"connectionID": conn.connectionID}).encode("utf-8"))])
+                else:
+                    raise ValueError("Controld verification failed.")
+            elif auth_type == "anonymous":
                 conn = FairdConnection(clientIp=ticket_data.get('clientIp'))
                 self.connections[conn.connectionID] = conn
                 return iter([pa.flight.Result(json.dumps({"connectionID": conn.connectionID}).encode("utf-8"))])
-            else: # 匿名访问
+            else:
                 conn = FairdConnection(clientIp=ticket_data.get('clientIp'))
                 self.connections[conn.connectionID] = conn
                 return iter([pa.flight.Result(json.dumps({"connectionID": conn.connectionID}).encode("utf-8"))])

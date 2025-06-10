@@ -12,14 +12,16 @@ logger = logging.getLogger(__name__)
 
 def test_sdk():
 
-    url = "dacp://60.245.194.25:50201"
+    #url = "dacp://60.245.194.25:50201"
+    url = "dacp://localhost:3101"
     username = "faird-user1"
     password = "user1@cnic.cn"
     #conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
-    #conn = DacpClient.connect(url, Principal.oauth("controld", controld_domain_name="controld_domain_name", signature="signature"))
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
-    #url = "dacp://localhost:3101"
+    #conn = DacpClient.connect(url, Principal.controld(domain_name="controld_domain_name", signature="signature"))
+
+
     conn = DacpClient.connect(url)
 
     ## !! for local test

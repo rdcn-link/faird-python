@@ -33,15 +33,28 @@ class DacpClient:
             client_ip = socket.gethostbyname(socket.gethostname())
         except socket.gaierror:
             client_ip = "127.0.0.1"
-        ticket = {'clientIp': client_ip}
-        if principal and principal.auth_type != AuthType.ANONYMOUS:
-            ticket.update({
-                'type': principal.params.get('type'),
-                'username': principal.params.get('username'),
-                'password': principal.params.get('password'),
-                'controld_domain_name': principal.params.get('controld_domain_name'),
-                'signature': principal.params.get('signature')
-            })
+        ticket = {
+            'clientIp': client_ip
+        }
+
+        if principal:
+            if principal.auth_type == AuthType.OAUTH:
+                ticket.update({
+                    'auth_type': principal.auth_type.value,
+                    'type': principal.params.get('type'),
+                    'username': principal.params.get('username'),
+                    'password': principal.params.get('password')
+                })
+            elif principal.auth_type == AuthType.CONTROLD:
+                ticket.update({
+                    'auth_type': principal.auth_type.value,
+                    'controld_domain_name': principal.params.get('controld_domain_name'),
+                    'signature': principal.params.get('signature')
+                })
+            elif principal.auth_type == AuthType.ANONYMOUS:
+                ticket.update({
+                    'auth_type': principal.auth_type.value
+                })
 
         # 发送连接请求
         with ConnectionManager.get_connection() as conn:
@@ -162,6 +175,7 @@ class DacpClient:
                 
 class AuthType(Enum):
     OAUTH = "oauth"
+    CONTROLD = "controld"
     ANONYMOUS = "anonymous"
 
 class Principal:
@@ -176,11 +190,16 @@ class Principal:
         return Principal(AuthType.OAUTH, type=type, **kwargs)
 
     @staticmethod
+    def controld(domain_name: str, signature: str, **kwargs) -> Principal:
+        return Principal(AuthType.CONTROLD, controld_domain_name=domain_name, signature=signature, **kwargs)
+
+    @staticmethod
     def anonymous() -> Principal:
         return Principal(AuthType.ANONYMOUS)
 
     def __repr__(self):
         return f"Principal(auth_type={self.auth_type}, params={self.params})"
+
 Principal.ANONYMOUS = Principal.anonymous()
 
 
