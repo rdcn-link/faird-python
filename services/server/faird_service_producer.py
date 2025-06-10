@@ -251,6 +251,14 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                 raise ValueError(f"Unsupported file extension: {file_extension}")
             parser = parser_class()
             sample_table = parser.sample(file_path)
+            if hasattr(parser, "count") and callable(getattr(parser, "count", None)):
+                try:
+                    total_count = parser.count(file_path)
+                except Exception as e:
+                    logger.warning(f"count方法调用失败: {e}")
+                    total_count = None
+            else:
+                total_count = None
 
         # 返回sample_table打印内容
         schema_names = [field.name for field in sample_table.schema]
@@ -264,7 +272,8 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
             'schema_names': schema_names,
             'schema_types': schema_types,
             # 'schema_metadata': meta_json_data,
-            'sample_data': sample_data
+            'sample_data': sample_data,
+            'total_count': total_count
         }
         return sample_json
 

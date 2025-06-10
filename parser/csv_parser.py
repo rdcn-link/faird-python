@@ -81,3 +81,11 @@ class CSVParser(BaseParser):
             NotImplementedError: 始终抛出未实现异常
         """
         raise NotImplementedError("CSVParser.write() 尚未实现：当前不支持写回 CSV 文件")
+
+    def count(self, file_path: str) -> int:
+        try:
+            table = csv.read_csv(file_path)
+            return table.num_rows
+        except Exception as e:
+            logger.error(f"统计 CSV 文件行数时出错: {e}")
+            raise

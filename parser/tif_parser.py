@@ -348,6 +348,33 @@ class TIFParser(BaseParser):
         except Exception as e:
             logger.error(f"采样 TIFF 文件失败: {e}")
             raise
+
+    def count(self, file_path: str) -> int:
+        """
+        返回解析后 Arrow Table 的总行数（即所有页/波段像素数的最大值）。
+        """
+        try:
+            images = tifffile.imread(file_path)
+            # 统一成列表
+            if images.ndim == 2:
+                images = [images]
+            elif images.ndim == 3:
+                if images.shape[0] in [1, 3, 4] and images.shape[0] < images.shape[1] and images.shape[0] < images.shape[2]:
+                    images = [images]
+                elif images.shape[2] in [1, 3, 4] and images.shape[2] < images.shape[0] and images.shape[2] < images.shape[1]:
+                    images = [images]
+                else:
+                    images = [img for img in images]
+            elif images.ndim == 4:
+                images = [img for img in images]
+            else:
+                images = [images]
+            # 统计每个波段/页的像素数
+            max_len = max(img.size for img in images)
+            return int(max_len)
+        except Exception as e:
+            logger.error(f"统计 TIFF 文件 Arrow Table 行数失败: {e}")
+            raise
         
     # def meta_to_json(self, meta: dict):
     #     """

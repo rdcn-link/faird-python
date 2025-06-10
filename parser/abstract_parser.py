@@ -42,3 +42,16 @@ class BaseParser(ABC):
             output_path (str): Output file path.
         """
         pass
+    
+    @abstractmethod
+    def count(self, file_path: str) -> int:
+        """
+        返回解析后 Arrow Table 的总行数。
+
+        Args:
+            file_path (str): 输入文件路径。
+
+        Returns:
+            int: Arrow Table 的总行数。
+        """
+        pass

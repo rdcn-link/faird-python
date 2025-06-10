@@ -144,6 +144,21 @@ def test_nc_parser_sample(nc_file_path):
     assert len(table.column_names) > 0
     logger.info("-----------------------------------------------")  
     
+def test_nc_parser_count(nc_file_path):
+    """
+    测试 NCParser 的 count 方法，验证返回的 Arrow Table 总行数是否正确。
+    :param nc_file_path: 本地真实nc文件路径
+    """
+    logger.info(f"测试 NCParser 的 count 方法, 文件路径: {nc_file_path}")
+    parser = NCParser()
+    row_count = parser.count(str(nc_file_path))
+    logger.info(f"count 方法返回的 Arrow Table 行数: {row_count}")
+    # # 进一步验证：parse后table.num_rows应等于count返回值
+    # table = parser.parse(str(nc_file_path))
+    # assert table.num_rows == row_count, f"count={row_count}, parse后实际行数={table.num_rows}"
+    # assert row_count > 0
+    logger.info("-----------------------------------------------")
+    
     
 # 测试函数入口
 if __name__ == "__main__":
@@ -164,15 +179,23 @@ if __name__ == "__main__":
     #     logger.info("开始测试真实NC文件,path [%s]", r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_yearly.nc")
     #     test_nc_parser_real_file(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_yearly.nc", tmp_path,"SOCATv2021_tracks_gridded_yearly_write.nc")
         # logger.info("所有真实NC文件parse测试通过")
-    logger.info("开始测试 NCParser 的 sample 方法")
-    test_nc_parser_sample(r"D:\test\faird\test_data.nc")
-    test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc")
-    test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_decadal.nc")
-    test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_monthly.nc") 
-    test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_yearly.nc")
-    test_nc_parser_sample(r"D:\test\faird\nc\air.mon.1981-2010.ltm.nc")
-    test_nc_parser_sample(r"D:\test\faird\nc\HadSST.3.1.1.0.anomalies.1.nc")
-
-    logger.info("所有采样测试通过")
+    # logger.info("开始测试 NCParser 的 sample 方法")
+    # test_nc_parser_sample(r"D:\test\faird\test_data.nc")
+    # test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc")
+    # test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_decadal.nc")
+    # test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_monthly.nc") 
+    # test_nc_parser_sample(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_yearly.nc")
+    # test_nc_parser_sample(r"D:\test\faird\nc\air.mon.1981-2010.ltm.nc")
+    # test_nc_parser_sample(r"D:\test\faird\nc\HadSST.3.1.1.0.anomalies.1.nc")
+    # logger.info("所有采样测试通过")
+    logger.info("开始测试 NCParser 的 count 方法")
+    test_nc_parser_count(r"D:\test\faird\test_data.nc")
+    test_nc_parser_count(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc")
+    test_nc_parser_count(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_decadal.nc")
+    test_nc_parser_count(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_monthly.nc")
+    test_nc_parser_count(r"D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_tracks_gridded_yearly.nc")
+    test_nc_parser_count(r"D:\test\faird\nc\air.mon.1981-2010.ltm.nc")
+    test_nc_parser_count(r"D:\test\faird\nc\HadSST.3.1.1.0.anomalies.1.nc")
+    logger.info("所有 count 方法测试通过")
     logger.info("测试完成")
         

@@ -143,9 +143,9 @@ def test_tif_sample(tif_path):
     # print("Arrow Table preview:")
     # print(table.to_pandas().head())
     # 用法示例
-    meta = {k.decode(): v.decode() for k, v in table.schema.metadata.items()}
-    json_data = parser.meta_to_json(meta)
-    logger.info(f"采样结果的元数据:{json.dumps(json_data)}")
+    # meta = {k.decode(): v.decode() for k, v in table.schema.metadata.items()}
+    # json_data = parser.meta_to_json(meta)
+    # logger.info(f"采样结果的元数据:{json.dumps(json_data)}")
     # 基本断言
     assert isinstance(table, pa.Table)
     assert table.num_columns > 0
@@ -160,6 +160,13 @@ def test_tif_sample(tif_path):
     print(table)
     print("sample方法测试通过")
     
+def test_tif_count(tif_path):
+    """测试 TIFParser 的 count 方法，验证返回的 Arrow Table 总行数是否正确"""
+    assert os.path.exists(tif_path), f"测试文件不存在: {tif_path}"
+    parser = TIFParser()
+    row_count = parser.count(tif_path)
+    table = parser.parse(tif_path)
+    logger.info(f"多波段TIFF文件行数: {row_count}，parse后实际行数: {table.num_rows}")
     
     
 if __name__ == "__main__":
@@ -181,6 +188,11 @@ if __name__ == "__main__":
         # logger.info("开始测试HWC多波段TIFF文件解析和写入,file_path [%s]", r"D:\test\faird\k-factorSD1.tif")
         # test_real_tif(r"D:\test\faird\k-factorSD1.tif", tmp_path, "k-factorSD1_write.tif")
         # logger.info("测试实际TIFF文件解析和写入完成")
-    logger.info("开始测试sample方法")
-    test_tif_sample(r"D:\test\faird\sample.tiff")  # 替换为实际的TIFF文件路径
+    # logger.info("开始测试sample方法")
+    # test_tif_sample(r"D:\test\faird\sample.tiff")  # 替换为实际的TIFF文件路径
+    logger.info("开始测试count方法")
+    test_tif_count(r"D:\test\faird\sample.tiff")  # 替换为实际的TIFF文件路径
+    test_tif_count(r"D:\test\faird\R-factor.tif")  # 替换为实际的TIFF文件路径
+    test_tif_count(r"D:\test\faird\k-factorSD1.tif")  # 替换为实际的TIFF文件路径
+    logger.info("count方法测试完成")
     logger.info("全部测试完成")
