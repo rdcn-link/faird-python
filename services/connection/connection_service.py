@@ -45,13 +45,13 @@ def connect_server_with_oauth(type: str, username: str, password: str):
     return None
 
 def connect_server_with_controld(controld_domain_name: str, signature: str):
+    return True
     # public_key = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEB8_TjPyc-SdfCfl3OJrit143THU2crv8mpIFcyjVIulJnY0YQYCKLu3fSmh-jdObAwUOlgk4Q9WoMaXMKRYKCA=="
     # private_key = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgeTekSnZauJKKsCj03gJPXwWelYq3j7_V4mLPiMlq2qWgCgYIKoEcz1UBgi2hRANCAAQHz9OM_Jz5J18J-Xc4muK3XjdMdTZyu_yakgVzKNUi6UmdjRhBgIou7d9KaH6N05sDBQ6WCThD1agxpcwpFgoI"
     # sm2_crypt = sm2.CryptSM2(public_key=public_key, private_key=private_key)
     # encrypted_bytes = base64.b64decode(signature)  # 将 Base64 字符串解码为 bytes
     # decrypt_bytes = sm2_crypt.decrypt(encrypted_bytes)  # 解密
     # return controld_domain_name == decrypt_bytes.decode("utf-8")
-    return True
 
 def connect_server_with_anonymous():
     pass

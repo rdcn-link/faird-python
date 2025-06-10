@@ -194,6 +194,12 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
             sample_json = self.sample_action(dataframe_name)
             return iter([pa.flight.Result(json.dumps(sample_json).encode())])
 
+        elif action_type == "count":
+            ticket_data = json.loads(action.body.to_pybytes().decode("utf-8"))
+            dataframe_name = ticket_data.get("dataframe_name")
+            count_json = self.count_action(dataframe_name)
+            return iter([pa.flight.Result(json.dumps(count_json).encode())])
+
         elif action_type == "open":
             ticket_data = json.loads(action.body.to_pybytes().decode("utf-8"))
             connection_id = ticket_data.get('connection_id')
@@ -244,6 +250,7 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
         file_extension = os.path.splitext(file_path)[1].lower()
         # 暂时这样适配文件夹类型
         sample_table = None
+        total_count = None
         if file_extension == "":
             sample_table = dir_parser.DirParser().sample_dir(file_path, dataset_name)
         else:
@@ -285,6 +292,41 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
             'total_count': total_count
         }
         return sample_json
+
+    def count_action(self, dataframe_name):
+        parsed_url = urlparse(dataframe_name)
+        dataset_name = f"{parsed_url.scheme}://{parsed_url.netloc}/{parsed_url.path.split('/', 2)[1]}"
+        relative_path = '/' + parsed_url.path.split('/', 2)[2]  # 相对路径
+        file_path = FairdConfigManager.get_config().storage_local_path + relative_path  # 绝对路径
+        file_extension = os.path.splitext(file_path)[1].lower()
+        total_count = None
+        if file_extension == "":
+            total_count = None
+        else:
+            parser_switch = {
+                ".csv": csv_parser.CSVParser,
+                ".json": None,
+                ".xml": None,
+                ".nc": nc_parser.NCParser,
+                ".tiff": tif_parser.TIFParser,
+                ".tif": tif_parser.TIFParser
+            }
+            parser_class = parser_switch.get(file_extension)
+            if not parser_class:
+                raise ValueError(f"Unsupported file extension: {file_extension}")
+            parser = parser_class()
+            if hasattr(parser, "count") and callable(getattr(parser, "count", None)):
+                try:
+                    total_count = parser.count(file_path)
+                except Exception as e:
+                    logger.warning(f"count方法调用失败: {e}")
+                    total_count = None
+            else:
+                total_count = None
+        rtn_json = {
+            'total_count': total_count
+        }
+        return rtn_json
 
     def open_action(self, dataframe_name):
         parsed_url = urlparse(dataframe_name)

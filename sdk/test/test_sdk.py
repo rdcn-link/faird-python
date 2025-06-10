@@ -19,15 +19,19 @@ def test_sdk():
     #conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
-    #conn = DacpClient.connect(url, Principal.controld(domain_name="controld_domain_name", signature="signature"))
+    #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
+    #conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
 
 
     conn = DacpClient.connect(url)
 
     ## !! for local test
-    # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
+    dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/sample.tiff"
     # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
-    # sample = conn.sample(dataframe_name)
+    count = conn.count(dataframe_name)
+    sample = conn.sample(dataframe_name)
     # print(sample)
 
     datasets = conn.list_datasets()
@@ -62,8 +66,8 @@ def test_sdk():
 
 
     # nc parser
-    #nc_dataframe_name = dataframes[4]['dataframeName']
-    #sample = conn.sample(nc_dataframe_name)
+    nc_dataframe_name = dataframes[4]['dataframeName']
+    sample = conn.sample(nc_dataframe_name)
     #df = conn.open(nc_dataframe_name)
     df = DataFrame()
     print(f"表结构: {df.schema} \n")

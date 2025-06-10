@@ -151,6 +151,15 @@ class DacpClient:
             for res in results:
                 return res.body.to_pybytes().decode('utf-8')
 
+    def count(self, dataframe_name: str):
+        ticket = {
+            'dataframe_name': dataframe_name
+        }
+        with ConnectionManager.get_connection() as conn:
+            results = conn.do_action(pa.flight.Action("count", json.dumps(ticket).encode('utf-8')))
+            for res in results:
+                return res.body.to_pybytes().decode('utf-8')
+
     def open(self, dataframe_name: str):
         from sdk.dataframe import DataFrame
         ticket = {
