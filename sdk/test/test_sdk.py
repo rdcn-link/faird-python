@@ -19,11 +19,11 @@ def test_sdk():
     #conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
-    #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
-    #conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
+    signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
+    conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
 
 
-    conn = DacpClient.connect(url)
+    #conn = DacpClient.connect(url)
 
     ## !! for local test
     #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"

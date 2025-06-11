@@ -122,3 +122,6 @@ class DirParser(BaseParser):
 
     def write(self, table: pa.Table, output_path: str):
         raise NotImplementedError("DirParser.write() 尚未实现：当前不支持写回 Dir 文件")
+
+    def count(self, file_path: str) -> int:
+        pass
