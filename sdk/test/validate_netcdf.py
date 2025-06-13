@@ -1,8 +1,8 @@
 import xarray as xr
 import numpy as np
 import sys
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 
 def compare_netcdf_files(original_path, output_path):

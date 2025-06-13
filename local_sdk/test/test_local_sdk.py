@@ -3,8 +3,8 @@ import pyarrow.compute as pc
 import pandas as pd
 
 from dataframe import DataFrame
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 
 def test_local_sdk():

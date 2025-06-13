@@ -1,15 +1,13 @@
 import os
 import time
 import psutil
-import logging
 import threading
 import ftplib
 import pandas as pd
 from sdk.dacp_client import DacpClient, Principal
 
-# 日志配置
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 # ===== 基础配置 =====
 SERVER_URL = "dacp://localhost:3101"

@@ -1,8 +1,7 @@
-import pyarrow as pa
 import pyarrow.flight as flight
 from services.server.faird_service_producer import FairdServiceProducer
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 class FairdServer:
     service_producer = None

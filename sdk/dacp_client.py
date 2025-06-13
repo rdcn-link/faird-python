@@ -7,8 +7,8 @@ import pyarrow as pa
 import pyarrow.flight
 import json
 import socket
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 from sdk.connection_pool import FlightConnectionPool, ConnectionManager
 
@@ -144,7 +144,8 @@ class DacpClient:
 
     def sample(self, dataframe_name: str):
         ticket = {
-            'dataframe_name': dataframe_name
+            'dataframe_name': dataframe_name,
+            'connection_id': self.__connection_id
         }
         with ConnectionManager.get_connection() as conn:
             results = conn.do_action(pa.flight.Action("sample", json.dumps(ticket).encode('utf-8')))
@@ -153,7 +154,8 @@ class DacpClient:
 
     def count(self, dataframe_name: str):
         ticket = {
-            'dataframe_name': dataframe_name
+            'dataframe_name': dataframe_name,
+            'connection_id': self.__connection_id
         }
         with ConnectionManager.get_connection() as conn:
             results = conn.do_action(pa.flight.Action("count", json.dumps(ticket).encode('utf-8')))
@@ -173,7 +175,8 @@ class DacpClient:
     def get_dataframe_stream(self, dataframe_name: str, max_chunksize: Optional[int] = 1024 * 1024 * 5):
         ticket = {
             'dataframe_name': dataframe_name,
-            'max_chunksize': max_chunksize
+            'max_chunksize': max_chunksize,
+            'connection_id': self.__connection_id
         }
         with ConnectionManager.get_connection() as conn:
             reader = conn.do_action(pa.flight.Action("get_dataframe_stream", json.dumps(ticket).encode('utf-8')))

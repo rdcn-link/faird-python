@@ -3,8 +3,8 @@ import time
 import psutil
 import unittest
 from sdk.dacp_client import DacpClient, Principal  # 假设这是用于获取 DataFrame 的客户端
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 class DataFramePerformanceTest(unittest.TestCase):
     SERVER_URL = "dacp://localhost:3101"

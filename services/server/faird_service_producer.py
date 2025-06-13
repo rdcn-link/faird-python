@@ -12,8 +12,9 @@ from services.connection.connection_service import connect_server_with_oauth, co
 from parser import *
 from compute.interactive.interactive import *
 from core.config import FairdConfigManager
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger, get_access_logger
+logger = get_logger(__name__)
+access_logger = get_access_logger(__name__)
 
 class FairdServiceProducer(pa.flight.FlightServerBase):
     def __init__(self, location: pa.flight.Location):
@@ -191,13 +192,21 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
         elif action_type == "sample":
             ticket_data = json.loads(action.body.to_pybytes().decode("utf-8"))
             dataframe_name = ticket_data.get("dataframe_name")
+            connection_id = ticket_data.get("connection_id")
             sample_json = self.sample_action(dataframe_name)
+            conn = self.connections.get(connection_id)
+            if conn:
+                access_logger.info(f"Dataframe: {dataframe_name}, Action: sample, Client IP: {conn.clientIp}, Username: {conn.username}")
             return iter([pa.flight.Result(json.dumps(sample_json).encode())])
 
         elif action_type == "count":
             ticket_data = json.loads(action.body.to_pybytes().decode("utf-8"))
             dataframe_name = ticket_data.get("dataframe_name")
+            connection_id = ticket_data.get("connection_id")
             count_json = self.count_action(dataframe_name)
+            conn = self.connections.get(connection_id)
+            if conn:
+                access_logger.info(f"Dataframe: {dataframe_name}, Action: count, Client IP: {conn.clientIp}, Username: {conn.username}")
             return iter([pa.flight.Result(json.dumps(count_json).encode())])
 
         elif action_type == "open":
@@ -209,12 +218,16 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
             # put dataframe to connection memory
             conn = self.connections.get(connection_id)
             conn.dataframes[dataframe_name] = df
+            if conn:
+                access_logger.info(f"Dataframe: {dataframe_name}, Action: open, Client IP: {conn.clientIp}, Username: {conn.username}")
             return None
 
         elif action_type == "get_dataframe_stream":
             ticket_data = json.loads(action.body.to_pybytes().decode("utf-8"))
             dataframe_name = ticket_data.get("dataframe_name")
             max_chunksize = ticket_data.get("max_chunksize")
+            connection_id = ticket_data.get('connection_id')
+            conn = self.connections.get(connection_id)
             if max_chunksize is None:
                 max_chunksize = 1024 * 1024 * 5
             # 获取文件路径
@@ -226,6 +239,8 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                 try:
                     with open(file_path, "rb") as file:
                         while chunk := file.read(chunk_size):
+                            access_logger.info(f"Dataframe: {dataframe_name}, Action: get_dataframe_stream, Data Size: {len(chunk)} Bytes, "
+                                               f"Client IP: {conn.clientIp}, Username: {conn.username}")
                             yield pa.flight.Result(chunk)
                 except FileNotFoundError:
                     raise ValueError(f"文件未找到: {file_path}")

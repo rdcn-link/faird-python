@@ -7,8 +7,8 @@ import uuid
 from parser.abstract_parser import BaseParser
 from services.datasource.services import *
 from core.config import FairdConfigManager
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 class DirParser(BaseParser):
 

@@ -2,8 +2,8 @@ import pandas as pd
 import time
 import psutil
 import os
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 # 工具函数：监控资源占用
 def measure(func, *args, **kwargs):

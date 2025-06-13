@@ -2,8 +2,8 @@ import xarray as xr
 import  pyarrow.compute as pc
 from sdk.dacp_client import DacpClient, Principal
 from pathlib import Path
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 #SERVER_URL = "dacp://localhost:3101"
 SERVER_URL = "dacp://60.245.194.25:50201"

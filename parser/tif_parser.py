@@ -1,12 +1,11 @@
 import os
-import logging
 import numpy as np
 import pyarrow as pa
 import pyarrow.ipc as ipc
 import tifffile
 from parser.abstract_parser import BaseParser
-
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 class TIFParser(BaseParser):
     def parse(self, file_path: str) -> pa.Table:

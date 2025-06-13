@@ -2,12 +2,11 @@ from typing import Optional, List
 
 from local_sdk.dataframe import DataFrame
 from parser import csv_parser
-from parser import  nc_parser_1
 from parser import  tif_parser
 import os
 import configparser
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 
 class FairdConfig:

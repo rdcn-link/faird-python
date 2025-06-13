@@ -3,8 +3,8 @@ import time
 import threading
 import psutil
 from sdk.dacp_client import DacpClient, Principal
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 # ===== 基础配置 =====
 SERVER_URL = "dacp://localhost:3101"

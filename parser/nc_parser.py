@@ -1,5 +1,4 @@
 import os
-import logging
 import numpy as np
 import pyarrow as pa
 import pyarrow.ipc as ipc
@@ -9,8 +8,8 @@ import netCDF4
 import ast
 import cftime
 from parser.abstract_parser import BaseParser
-
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 def get_auto_chunk_size(var_shape, dtype=np.float64, target_mem_mb=10):
     dtype_size = np.dtype(dtype).itemsize

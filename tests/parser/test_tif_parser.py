@@ -4,12 +4,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 import numpy as np
 import pyarrow as pa
 import tifffile
-import logging
 from parser.tif_parser import TIFParser
-import json
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 def create_test_tiff(path, shape=(3, 10, 10), dtype=np.uint8):
     """创建一个测试用的TIFF文件"""

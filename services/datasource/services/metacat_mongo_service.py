@@ -9,8 +9,8 @@ from pydantic import ValidationError
 from core.config import FairdConfigManager
 from core.models.dataset_meta import DatasetMetadata
 from services.datasource.interfaces.datasource_interface import FairdDatasourceInterface
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 
 class MetaCatMongoService(FairdDatasourceInterface):

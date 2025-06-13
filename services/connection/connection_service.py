@@ -1,9 +1,8 @@
 import base64
 import json
 import requests
-import logging
-from gmssl import sm2, func
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 oauth_url = "https://api.opendatachain.cn/auth/"
 client_id = "faird-client1"
@@ -45,18 +44,16 @@ def connect_server_with_oauth(type: str, username: str, password: str):
     return None
 
 def connect_server_with_controld(controld_domain_name: str, signature: str):
-    return True
-    # public_key_base64 = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEB8_TjPyc-SdfCfl3OJrit143THU2crv8mpIFcyjVIulJnY0YQYCKLu3fSmh-jdObAwUOlgk4Q9WoMaXMKRYKCA=="
-    # private_key_base64 = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgeTekSnZauJKKsCj03gJPXwWelYq3j7_V4mLPiMlq2qWgCgYIKoEcz1UBgi2hRANCAAQHz9OM_Jz5J18J-Xc4muK3XjdMdTZyu_yakgVzKNUi6UmdjRhBgIou7d9KaH6N05sDBQ6WCThD1agxpcwpFgoI"
-    # public_key = base64.b64decode(public_key_base64)
-    # private_key = base64.b64decode(private_key_base64)
+    # public_key = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEB8_TjPyc-SdfCfl3OJrit143THU2crv8mpIFcyjVIulJnY0YQYCKLu3fSmh-jdObAwUOlgk4Q9WoMaXMKRYKCA=="
+    # private_key = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgeTekSnZauJKKsCj03gJPXwWelYq3j7_V4mLPiMlq2qWgCgYIKoEcz1UBgi2hRANCAAQHz9OM_Jz5J18J-Xc4muK3XjdMdTZyu_yakgVzKNUi6UmdjRhBgIou7d9KaH6N05sDBQ6WCThD1agxpcwpFgoI"
     #
-    # sm2_crypt = sm2.CryptSM2(public_key=public_key, private_key=private_key)
+    # sm2_crypt = sm2.CryptSM2(public_key="", private_key=private_key)
     # encrypted_bytes = base64.b64decode(signature)  # 将 Base64 字符串解码为 bytes
     # decrypt_bytes = sm2_crypt.decrypt(encrypted_bytes)
     # a = base64.b64encode(decrypt_bytes)# 解密
     # a = a.decode("utf-8")
     # return controld_domain_name == decrypt_bytes.decode("utf-8")
+    return True
 
 def base64_to_hex(base64_key):
     return base64.b64decode(base64_key).hex()

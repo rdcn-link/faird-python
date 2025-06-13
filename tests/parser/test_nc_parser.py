@@ -5,8 +5,8 @@ import numpy as np
 import pyarrow as pa
 import netCDF4
 import tempfile
-import logging
-from parser.nc_parser import NCParser
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 import time
 import json
 

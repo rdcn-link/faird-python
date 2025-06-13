@@ -6,8 +6,8 @@ from sdk.dacp_client import DacpClient, Principal
 from sdk.dataframe import DataFrame
 import os
 import uuid
-import logging
-logger = logging.getLogger(__name__)
+from utils.logger_utils import get_logger
+logger = get_logger(__name__)
 
 
 def test_sdk():
@@ -16,39 +16,57 @@ def test_sdk():
     url = "dacp://localhost:3101"
     username = "faird-user1"
     password = "user1@cnic.cn"
-    #conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
+    conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
-    signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
-    conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
+    #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
+    #conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
 
 
     #conn = DacpClient.connect(url)
 
     ## !! for local test
     #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
-    #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
-    dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/sample.tiff"
-    # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
+    # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atld das/SOCATv2021_Gridded_Dat/sample.tiff"
+    # # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
     count = conn.count(dataframe_name)
     sample = conn.sample(dataframe_name)
+    total_size = 0
+    for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024 * 500):
+        total_size += len(chunk)
+    df = conn.open(dataframe_name)
     # print(sample)
 
     datasets = conn.list_datasets()
-    has_permission = conn.check_permission(datasets[0], "faird-user1")
-    metadata = conn.get_dataset(datasets[12])
+    has_permission = conn.check_permission(datasets[5], "faird-user1")
+    metadata = conn.get_dataset(datasets[56])
 
 
-    dataframes = conn.list_dataframes(datasets[12])
-    # 改流式
-    for chunk in conn.list_dataframes_stream(datasets[12]):
-        print(f"Chunk size: {len(chunk)}")
+    dataframes = conn.list_dataframes(datasets[56])
+    # # 改流式
+    # for chunk in conn.list_dataframes_stream(datasets[12]):
+    #     print(f"Chunk size: {len(chunk)}")
 
-    dataframe_name = dataframes[3]['dataframeName']
-    total_size = 0
-    for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024*1024*5):
-        total_size += len(chunk)
-    print(f"total size: {total_size} Bytes")
+    # dataframe_name = dataframes[1]['dataframeName']
+    #
+    # sample = conn.sample(dataframe_name)
+    # count = conn.count(dataframe_name)
+    #
+    # total_size = 0
+    # for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024*1024*5):
+    #     total_size += len(chunk)
+    # print(f"total size: {total_size} Bytes")
+
+    dataframe_name = 'dacp://60.245.194.25:50201/2m陆表气温数据集/historical/SD016-GHCN_CAMS/Derived/air.mon.1981-2010.ltm.nc'
+    output_file_path = "/Users/yaxuan/Desktop/output.nc"
+    with open(output_file_path, 'wb') as f:
+        for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024*1024*5):
+            f.write(chunk)
+    print(f"数据已写入到 {output_file_path}")
+
+    sample = conn.sample(dataframe_name)
+    count = conn.count(dataframe_name)
 
     # dir sample
     dir_dataframe_name = dataframes[0]['dataframeName']
