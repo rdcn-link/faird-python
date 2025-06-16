@@ -1,6 +1,7 @@
 import base64
 import json
 import requests
+from gmssl import sm2, func
 from utils.logger_utils import get_logger
 logger = get_logger(__name__)
 
