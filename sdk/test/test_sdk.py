@@ -12,11 +12,16 @@ logger = get_logger(__name__)
 
 def test_sdk():
 
-    #url = "dacp://60.245.194.25:50201"
-    url = "dacp://localhost:3101"
+    url = "dacp://60.245.194.25:50201"
+    #url = "dacp://localhost:3101"
     username = "faird-user1"
     password = "user1@cnic.cn"
     conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
+
+    # dir_dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat"
+    # sample = conn.sample(dir_dataframe_name)
+
+
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
     #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
@@ -27,23 +32,29 @@ def test_sdk():
 
     ## !! for local test
     #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
-    dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
-    # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atld das/SOCATv2021_Gridded_Dat/sample.tiff"
-    # # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
-    count = conn.count(dataframe_name)
-    sample = conn.sample(dataframe_name)
-    total_size = 0
-    for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024 * 500):
-        total_size += len(chunk)
-    df = conn.open(dataframe_name)
-    # print(sample)
+    # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
+    # # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atld das/SOCATv2021_Gridded_Dat/sample.tiff"
+    # # # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    # count = conn.count(dataframe_name)
+    # sample = conn.sample(dataframe_name)
+    # total_size = 0
+    # for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024 * 500):
+    #     total_size += len(chunk)
+    # df = conn.open(dataframe_name)
+    # # print(sample)
 
     datasets = conn.list_datasets()
-    has_permission = conn.check_permission(datasets[5], "faird-user1")
-    metadata = conn.get_dataset(datasets[56])
+    # has_permission = conn.check_permission(datasets[5], "faird-user1")
+    # metadata = conn.get_dataset(datasets[56])
 
 
-    dataframes = conn.list_dataframes(datasets[56])
+    dataframes = conn.list_dataframes(datasets[12])
+    dataframe_name = dataframes[0]['dataframeName']
+    df = conn.open(dataframe_name)
+    df.collect_blob()
+    print(df)
+
+
     # # 改流式
     # for chunk in conn.list_dataframes_stream(datasets[12]):
     #     print(f"Chunk size: {len(chunk)}")

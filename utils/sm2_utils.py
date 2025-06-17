@@ -51,11 +51,11 @@ if __name__ == "__main__":
     print("Public Key:", public_key_base64_0)
     print("Private Key:", private_key_base64_0)
 
-    public_key_base64 = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaGraE8rgvcgxq7RKZe-IQaRuVsiKHtWM9a7A4ehshcS3aAjIJbbWR93mvFzImhpIV4kE6sknQpHoBm9qi3nufw=="
-    private_key_base64 = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgpybOFF8JSWIZ6g9ShllNZHnBc4nrshcDTDodjphTEG2gCgYIKoEcz1UBgi2hRANCAARoatoTyuC9yDGrtEpl74hBpG5WyIoe1Yz1rsDh6GyFxLdoCMglttZH3ea8XMiaGkhXiQTqySdCkegGb2qLee5_"
+    #public_key_base64 = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaGraE8rgvcgxq7RKZe-IQaRuVsiKHtWM9a7A4ehshcS3aAjIJbbWR93mvFzImhpIV4kE6sknQpHoBm9qi3nufw=="
+    #private_key_base64 = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgpybOFF8JSWIZ6g9ShllNZHnBc4nrshcDTDodjphTEG2gCgYIKoEcz1UBgi2hRANCAARoatoTyuC9yDGrtEpl74hBpG5WyIoe1Yz1rsDh6GyFxLdoCMglttZH3ea8XMiaGkhXiQTqySdCkegGb2qLee5_"
 
-    public_key = bytes.hex(base64.b64decode(public_key_base64)) if public_key_base64 else None
-    private_key = bytes.hex(base64.b64decode(private_key_base64)) if private_key_base64 else None
+    public_key = bytes.hex(base64.b64decode(public_key_base64_0)) if public_key_base64_0 else None
+    private_key = bytes.hex(base64.b64decode(private_key_base64_0)) if private_key_base64_0 else None
 
     # 初始化 SM2 工具类
     sm2_utils = SM2Utils(private_key=private_key, public_key=public_key)

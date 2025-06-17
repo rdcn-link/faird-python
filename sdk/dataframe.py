@@ -138,6 +138,18 @@ class DataFrame(DataFrame):
             self.actions = []
         return self
 
+    def collect_blob(self) -> DataFrame:
+        if self.data is None:
+            ticket = {
+                "dataframe": json.dumps(self, default=vars),
+                "type": "collect_blob"
+            }
+            with ConnectionManager.get_connection() as conn:
+                reader = conn.do_get(pa.flight.Ticket(json.dumps(ticket).encode('utf-8')))
+            self.data = reader.read_all()
+            self.actions = []
+        return self
+
     def get_stream(self, max_chunksize: Optional[int] = 1000):
         if self.data is None:
             ticket = {

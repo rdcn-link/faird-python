@@ -34,7 +34,8 @@ class DirParser(BaseParser):
                 "suffix": file_dict["suffix"],
                 "type": file_dict["type"],
                 "size": file_dict["size"],
-                "time": file_dict["time"] if file_dict.__contains__("time") else None
+                "time": file_dict["time"] if file_dict.__contains__("time") else None,
+                "blob": None
             })
         files_data = files_data[:10]
 
@@ -45,7 +46,8 @@ class DirParser(BaseParser):
             ("suffix", pa.string()),
             ("type", pa.string()),
             ("size", pa.int64()),
-            ("time", pa.string())
+            ("time", pa.string()),
+            ("blob", pa.binary())
         ])
         table = pa.Table.from_pydict({key: [file[key] for file in files_data] for key in schema.names}, schema=schema)
         return table
@@ -92,7 +94,8 @@ class DirParser(BaseParser):
                 "suffix": file_dict["suffix"],
                 "type": file_dict["type"],
                 "size": file_dict["size"],
-                "time": file_dict["time"] if file_dict.__contains__("time") else None
+                "time": file_dict["time"] if file_dict.__contains__("time") else None,
+                "blob": None
             })
 
         # 定义 Arrow 表的 schema
@@ -102,7 +105,8 @@ class DirParser(BaseParser):
             ("suffix", pa.string()),
             ("type", pa.string()),
             ("size", pa.int64()),
-            ("time", pa.string())
+            ("time", pa.string()),
+            ("blob", pa.binary())
         ])
         table = pa.Table.from_pydict({key: [file[key] for file in files_data] for key in schema.names}, schema=schema)
 

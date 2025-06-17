@@ -72,11 +72,34 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
         max_chunksize = ticket_data.get('max_chunksize')
         row_index = ticket_data.get('row_index')  # 获取行索引
         column_name = ticket_data.get('column_name')  # 获取列名
+        type = ticket_data.get('type')
 
         # 从conn中获取dataframe.data
         conn = self.connections[connection_id]
         arrow_table = conn.dataframes[dataframe_id].data
         arrow_table = handle_prev_actions(arrow_table, actions)
+
+        # todo: 暂时在这里处理collect_blob
+        if type is not None and type == "collect_blob":
+            batches = arrow_table.to_batches()
+            updated_batches = []
+            for batch in batches:
+                path_column = batch.column(batch.schema.get_field_index("path")).to_pylist()
+                blob_column_index = batch.schema.get_field_index("blob")
+                blob_data = []
+                for path in path_column:
+                    try:
+                        file_path = FairdConfigManager.get_config().storage_local_path + path
+                        logger.info(f"Reading file: {file_path}")
+                        with open(file_path, "rb") as f:
+                            blob_data.append(f.read())
+                    except Exception as e:
+                        logger.error(f"Error reading file {path}: {e}")
+                        blob_data.append(None)
+                blob_array = pa.array(blob_data, type=pa.binary())
+                updated_batch = batch.set_column(blob_column_index, "blob", blob_array)
+                updated_batches.append(updated_batch)
+            return pa.flight.GeneratorStream(arrow_table.schema, iter(updated_batches))
 
         if row_index is not None:  # 如果请求某行
             row_data = arrow_table.slice(row_index, 1).to_pydict()
