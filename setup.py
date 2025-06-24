@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="faird",
-    version="1.0.6",
+    version="1.0.7",
     description="A SDK for working with DataFrame",
     author="rdcn",
     author_email="rdcn@cnic.com",

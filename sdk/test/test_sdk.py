@@ -24,8 +24,8 @@ def test_sdk():
 
     #conn = DacpClient.connect(url, Principal.ANONYMOUS)
 
-    #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
-    #conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
+    signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
+    conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
 
 
     #conn = DacpClient.connect(url)
@@ -47,12 +47,17 @@ def test_sdk():
     # has_permission = conn.check_permission(datasets[5], "faird-user1")
     # metadata = conn.get_dataset(datasets[56])
 
-
-    dataframes = conn.list_dataframes(datasets[12])
-    dataframe_name = dataframes[0]['dataframeName']
+    conn = DacpClient.connect("dacp://60.245.194.25:50201")
+    dataframes = conn.list_dataframes(datasets[56]) # 这个数据集下有3个文件（dataframe）
+    dataframe_name = dataframes[0]['dataframeName'] # 这个是第一个dataframe，dir类型，有3行，每一行是一个文件，最后一列是blob
     df = conn.open(dataframe_name)
+    print(df) # 此时blob=None
+
+    # 加载blob数据
     df.collect_blob()
-    print(df)
+    # 获取第一个nc文件的blob数据
+    nc_blob_data = df[0]['blob']
+    print(f"Blob data size: {len(nc_blob_data)} bytes")
 
 
     # # 改流式
