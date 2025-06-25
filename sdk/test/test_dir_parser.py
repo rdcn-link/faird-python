@@ -22,6 +22,15 @@ def create_dir_dataframe():
             "size": 958045,
             "time": "2025-06-01T00:10:16.688000000",
             "blob": None
+        },
+        {
+            "name": "SOCATv2021_qrtrdeg_gridded_coast_monthly.nc",
+            "path": "/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc",
+            "suffix": "nc",
+            "type": "no",
+            "size": 389948500,
+            "time": "2025-06-01T00:10:16.688000000",
+            "blob": None
         }
     ]
     # 定义 Arrow 表的 schema
@@ -40,6 +49,13 @@ if __name__ == "__main__":
     df = DataFrame(id="/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat", connection_id=0)
     df.data = create_dir_dataframe()
     print(df)
+
+    row = df[0]  # 获取第 0 行
+    blob_stream = row["blob"]  # 获取 blob 列的流式数据
+
+    # 流式读取 blob 数据
+    for chunk in blob_stream:
+        print(f"Chunk size: {len(chunk)} bytes")
 
     batches = df.data.to_batches()
     updated_batches = []

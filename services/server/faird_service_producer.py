@@ -101,10 +101,38 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                 updated_batches.append(updated_batch)
             return pa.flight.GeneratorStream(arrow_table.schema, iter(updated_batches))
 
+        if column_name is not None and column_name == "blob":
+            # 如果请求的是 blob 列
+            row_data = arrow_table.slice(row_index, 1).to_pydict()
+            path = row_data["path"][0]
+
+            # 生成流式加载的生成器
+            def blob_stream():
+                try:
+                    chunk_size = 100 * 1024 * 1024 # 每次返回的最大块大小为 100MB
+                    file_path = FairdConfigManager.get_config().storage_local_path + path
+                    logger.info(f"Reading file: {file_path}")
+                    with open(file_path, "rb") as f:
+                        while chunk := f.read(chunk_size):
+                            yield pa.RecordBatch.from_arrays([pa.array([chunk], type=pa.binary())], ["blob"])
+                except Exception as e:
+                    logger.error(f"Error reading file {path}: {e}")
+                    yield pa.RecordBatch.from_arrays([pa.array([None], type=pa.binary())], ["blob"])
+
+            return pa.flight.GeneratorStream(
+                pa.schema([("blob", pa.binary())]),
+                blob_stream()
+            )
+
         if row_index is not None:  # 如果请求某行
             row_data = arrow_table.slice(row_index, 1).to_pydict()
+            # 检查并将 blob 列的类型从 null 转换为 binary
+            if "blob" in row_data:
+                blob_data = row_data["blob"]
+                if blob_data is None or blob_data[0] is None:
+                    row_data["blob"] = [b""]  # 用空的 binary 值替代 null
             return pa.flight.GeneratorStream(
-                pa.schema([(col, arrow_table.schema.field(col).type) for col in row_data.keys()]),
+                pa.schema([(col, pa.binary() if col == "blob" else arrow_table.schema.field(col).type) for col in row_data.keys()]),
                 iter([pa.RecordBatch.from_pydict(row_data)])
             )
         elif column_name is not None:  # 如果请求某列

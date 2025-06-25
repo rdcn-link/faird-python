@@ -12,53 +12,73 @@ logger = get_logger(__name__)
 
 def test_sdk():
 
-    url = "dacp://60.245.194.25:50201"
-    #url = "dacp://localhost:3101"
+    # url = "dacp://60.245.194.25:50201"
+    url = "dacp://localhost:3101"
     username = "faird-user1"
     password = "user1@cnic.cn"
     conn = DacpClient.connect(url, Principal.oauth("conet", username=username, password=password))
 
-    # dir_dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat"
-    # sample = conn.sample(dir_dataframe_name)
+    #datasets = conn.list_datasets()
+    #dataframes = conn.list_dataframes(datasets[1]) # 这个数据集下有3个文件（dataframe）
+    #dataframe_name = dataframes[0]['dataframeName'] # 这个是第一个dataframe，dir类型，有3行，每一行是一个文件，最后一列是blob
+    dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat"
+    df = conn.open(dataframe_name)
+    print(df) # 此时blob=None
 
+    blob_reader = df[2]["blob"]  # 获取 blob 列的流式数据
 
-    #conn = DacpClient.connect(url, Principal.ANONYMOUS)
+    # 流式读取 blob 数据
+    for chunk in blob_reader:
+        print(f"Chunk size: {len(chunk)} bytes")
 
-    signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
-    conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
-
-
-    #conn = DacpClient.connect(url)
-
-    ## !! for local test
-    #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    # dataframe = dataframes[0]
     # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
-    # # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atld das/SOCATv2021_Gridded_Dat/sample.tiff"
-    # # # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
-    # count = conn.count(dataframe_name)
-    # sample = conn.sample(dataframe_name)
-    # total_size = 0
-    # for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024 * 500):
-    #     total_size += len(chunk)
     # df = conn.open(dataframe_name)
-    # # print(sample)
-
-    datasets = conn.list_datasets()
-    # has_permission = conn.check_permission(datasets[5], "faird-user1")
-    # metadata = conn.get_dataset(datasets[56])
+    # print(df)
+    # a = df[0]['start_p']  # 打印第一行的'start_p'列的值)
+    # tt = df[0]['blob']
+    # # for chunk in blob_reader:
+    # #     print(f"Chunk size: {len(chunk)} bytes")
+    #     # 处理chunk数据，例如保存到文件或其他操作
+    #     # with open("output_file", "wb") as f:
+    #     #     f.write(chunk)
+    #
+    #
+    #
+    # # sample = conn.sample(dir_dataframe_name)
+    #
+    #
+    # #conn = DacpClient.connect(url, Principal.ANONYMOUS)
+    #
+    # #signature = "BL6AAAQHyldN/BvWKc3chpVxcQymS+DCs9V596gb8bK0cG8QZ5nEcVIaYhML9/j+3PvJ5rlwbeYwhJO5dlBv0IKcr+qbE5uneXC8YN/IyGPbfqjL9GLRQcwDBzfkrA0lW7ngOQOOrnfPPfv0Gsk="
+    # #conn = DacpClient.connect(url, Principal.controld(domain_name="sign_controld", signature=signature))
+    #
+    #
+    # #conn = DacpClient.connect(url)
+    #
+    # ## !! for local test
+    # #dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    # # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atlas/SOCATv2021_Gridded_Dat/SOCATv2021_tracks_gridded_decadal.csv"
+    # # # dataframe_name = "dacp://0.0.0.0:3101/中尺度涡旋数据集/sharedata/dataset/historical/SD039-SurfOcean_CO2_Atld das/SOCATv2021_Gridded_Dat/sample.tiff"
+    # # # # dataframe_name = r"dacp://0.0.0.0:3101/中尺度涡旋数据集/D:\test\faird\SOCATv2021_Gridded_Dat\SOCATv2021_qrtrdeg_gridded_coast_monthly.nc"
+    # # count = conn.count(dataframe_name)
+    # # sample = conn.sample(dataframe_name)
+    # # total_size = 0
+    # # for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024 * 500):
+    # #     total_size += len(chunk)
+    # # df = conn.open(dataframe_name)
+    # # # print(sample)
+    #
+    # datasets = conn.list_datasets()
+    # # has_permission = conn.check_permission(datasets[5], "faird-user1")
+    # # metadata = conn.get_dataset(datasets[56])
 
     conn = DacpClient.connect("dacp://60.245.194.25:50201")
+    datasets = conn.list_datasets()
     dataframes = conn.list_dataframes(datasets[56]) # 这个数据集下有3个文件（dataframe）
     dataframe_name = dataframes[0]['dataframeName'] # 这个是第一个dataframe，dir类型，有3行，每一行是一个文件，最后一列是blob
     df = conn.open(dataframe_name)
     print(df) # 此时blob=None
-
-    # 加载blob数据
-    df.collect_blob()
-    # 获取第一个nc文件的blob数据
-    nc_blob_data = df[0]['blob']
-    print(f"Blob data size: {len(nc_blob_data)} bytes")
-
 
     # # 改流式
     # for chunk in conn.list_dataframes_stream(datasets[12]):

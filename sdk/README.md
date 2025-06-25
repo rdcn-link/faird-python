@@ -49,11 +49,29 @@ for chunk in conn.list_dataframes_stream(datasets[1]):
 ```
 
 ### 2.6. 获取数据帧的数据流
+- 方式一：get_dataframe_stream
 ```python
 total_size = 0
 for chunk in conn.get_dataframe_stream(dataframe_name, max_chunksize=1024*1024*5):
     total_size += len(chunk)
 print(f"total size: {total_size} Bytes")
+```
+- 方式二：collect_blob
+```python
+dataframe_name = dataframes[0]['dataframeName'] # 假设这个为dir类型
+df = conn.open(dataframe_name) # 此时blob列的值都为None
+
+# 加载全部文件的blob数据
+df.collect_blob()
+```
+- 方式三：下标
+```python
+# 获取第一行 blob 列的流式数据
+blob_reader = df[0]["blob"]  
+
+# 流式读取 blob 数据
+for blob in blob_reader:
+    print(f"blob size: {len(blob)} bytes")
 ```
 
 ### 2.7. 获取数据帧的数据样例

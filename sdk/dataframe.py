@@ -36,8 +36,26 @@ class DataFrame(DataFrame):
                 with ConnectionManager.get_connection() as conn:
                     reader = conn.do_get(pa.flight.Ticket(json.dumps(ticket).encode('utf-8')))
                 row_data = reader.read_all().to_pydict()
-                return {col: row_data[col][0] for col in row_data}
-            return {col: self.data[col][index].as_py() for col in self.data.column_names}
+                #return {col: row_data[col][0] for col in row_data}
+                row_data = {col: row_data[col][0] for col in row_data}
+
+            #row_data = {col: self.data[col][index].as_py() for col in self.data.column_names}
+
+                if "blob" in row_data and row_data["blob"] == b'':
+                    ticket = {
+                        "dataframe": json.dumps(self, default=vars),
+                        "row_index": index,
+                        "column_name": "blob"
+                    }
+                    with ConnectionManager.get_connection() as conn:
+                        reader = conn.do_get(pa.flight.Ticket(json.dumps(ticket).encode('utf-8')))
+                    # 返回流式读取生成器
+                    def blob_stream():
+                        for batch in reader:
+                            for blob in batch.data.column(0):  # 遍历每个分块
+                                yield blob.as_py()
+                    row_data["blob"] = blob_stream()
+                return row_data
         elif isinstance(index, str):  # 列选择
             if self.data is None:
                 ticket = {
