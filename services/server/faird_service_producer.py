@@ -169,7 +169,7 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                     self.connections[conn.connectionID] = conn
                     return iter([pa.flight.Result(json.dumps({"connectionID": conn.connectionID}).encode("utf-8"))])
                 else:
-                    raise ValueError("Controld verification failed.")
+                    return iter([pa.flight.Result(json.dumps({"errorMsg": "connect verification error"}).encode("utf-8"))])
             elif auth_type == "anonymous":
                 conn = FairdConnection(clientIp=ticket_data.get('clientIp'))
                 self.connections[conn.connectionID] = conn

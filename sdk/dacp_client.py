@@ -61,6 +61,9 @@ class DacpClient:
             results = conn.do_action(pa.flight.Action("connect_server", json.dumps(ticket).encode('utf-8')))
             for res in results:
                 res_json = json.loads(res.body.to_pybytes().decode('utf-8'))
+                if res_json.get('errorMsg') != None:
+                    logger.error(res_json.get('errorMsg'))
+                    return None
                 client.__token = res_json.get("token")
                 client.__connection_id = res_json.get("connectionID")
             return client
