@@ -11,10 +11,19 @@ logger = get_logger(__name__)
 
 
 def test_sdk():
-    url = "dacp://localhost:3101"
+    url = "dacp://60.245.194.25:50201"
     signature = "aYii16AHpVH0YNhXtu6Q/r9I3bUmccH7hEVuaqmzUWvzvwqPuYeH8VtBz4XsDSmCii2GTi+4ZOfYEe/QfIaNccGMjwUM5we6H4HfkXYTaKnBllgRnh9/RtzgGB2oEHXMHkX3Sep+r0HFgqp7xC3r+a1hQuGrewt8/97WVVKVfFuVarWncDmrUe4GKCgJz8zcINEpBi4NKu2/qLGs3hwh9iymfj1QZAheXXQP+xw3BYVkNT6rq3HYA0Ux0QIslsWv13+ud4fFEbFftVODIoPp72JB7qiq4Kq8xZcifCiVxC69tPLcYv4p99WOLZ9KPe7ysUEMqTEMA4tfa8LsBqvlqA=="
     conn = DacpClient.connect(url, Principal.controld(domain_name="hello from java", signature=signature))
+    datasets = conn.list_datasets()
+    dataframes = conn.list_dataframes(datasets[56])
+    dataframe_name = dataframes[0]['dataframeName']
+    df = conn.open(dataframe_name)
+    print(df)  # 此时blob=None
 
+    blob_reader = df[1]["blob"]  # 获取 blob 列的流式数据
+    # 流式读取 blob 数据，每批最大100M
+    for blob in blob_reader:
+        print(f"blob size: {len(blob)} bytes")
 
     # url = "dacp://60.245.194.25:50201"
     url = "dacp://localhost:3101"
