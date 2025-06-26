@@ -179,6 +179,9 @@ class FairdServiceProducer(pa.flight.FlightServerBase):
                 self.connections[conn.connectionID] = conn
                 return iter([pa.flight.Result(json.dumps({"connectionID": conn.connectionID}).encode("utf-8"))])
 
+        elif action_type == "ping":
+            return iter([pa.flight.Result(b"pong")])
+
         elif action_type == "get_instrument_info":
             instrument_info = FairdConfigManager.get_config().instrument_info
             return iter([pa.flight.Result(instrument_info.encode("utf-8"))])
