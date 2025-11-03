@@ -4,7 +4,7 @@ faird refactored version (2025-05-07)
 
 ### 1.Install conda
 
-**1.1 Download Miniconda (Python 3 version, refer to this link for reference) **
+1.1 Download Miniconda (Python 3 version, refer to this link for reference)
 
 ```wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh```
 
