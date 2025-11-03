@@ -1,4 +1,4 @@
-faird重构版本(2025-05-07)
+faird refactored version (2025-05-07)
 
 ## Environment Configuration
 
